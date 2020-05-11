@@ -48,9 +48,9 @@ def main():
     #
     rc = p.runLoop(processLine, False, 0)
     if rc == True:
-        print 'Reached the end of file'
+        print '*** Reached the end of file ***'
     else:
-        print 'Quit before reaching the end of file'
+        print '*** Quit before reaching the end of file ***'
 
     #
     # 3. destruct the getline object
@@ -71,7 +71,7 @@ def main():
 #    False: p.runLoop() to stop reading lines and return False
 #
 def processLine(p, line, *argv):
-    r = re.compile(r'^[0-9]*$')
+    r = re.compile(r'[0-9]+')
     line = p.chop(line)
     m = r.search(line)
     if m != None:
