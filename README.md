@@ -1,78 +1,71 @@
 # getline
-Get a line from a stream
+The getline module provides a simple interface to read a line from an input
+stream and pass it to the specified function. An input stream can be either
+a regular file, stdin, or pipe.
 
-Usage:
+## Usage
 ```python
-% cat prLine.py
-#!/usr/bin/env python
-#
-# Usage: prLine.py [file]
-#
-
 import getline
 import re
-import sys
 
 def main():
     #
-    # Read from stdin if there are no arguments
+    # 1. Instantiate getline object
     #
-    if len(sys.argv) > 1:
-        file = sys.argv[1]
-    else:
-        file = '-'
+    f = getline.getline('/etc/passwd') # regular file
+    s = getline.getline('-')           # stdin
+    p = getline.getline('ls /etc |')   # pipe
 
     #
-    # 1. Instantiate 'getline' with input file 'file'
-    # 2. Call the main loop runLoop()
-    # 2.1. runLoop() reads a line from 'file', then passes it to the first
-    #      parameter processLine() until reaching the end of file
-    # 2.1. runLoop() strips white spaces if the second parameter is 'True'
-    # 2.2. runLoop() does not strip white spaces if the  second parameter is 'False'
-    # 2.3. processLine() receives all parameters from the 3rd
+    # 2. Call the loop reading input stream
+    #    1st param: function to be called each time a new line is read
+    #               (let us call it processLine())
+    #    2nd param: line is stripped if it is True
+    #               line is *NOT* stripped if is False
+    #    3rd param: all parameters from the 3rd are passed to processLine()
     #
-    ins = getline.getline(file)
-    ins.runLoop(processLine, False, 0)
+    #    Return value:
+    #     True: input stream reached EOF (end of file)
+    #     False: processLine() exited before the input stream reached EOF
+    #
+    rc = p.runLoop(processLine, False, 0)
+    if rc == True:
+        print 'Reached the end of file'
+    else:
+        print 'Quit before reaching the end of file'
+
+    #
+    # 3. destruct the getline object
+    #
+    del p
+    del f
+    del s
+
 
 #
-# p:      instance of class 'getline'
-# line:   the line to be processed
-# argv[]: parameters passed from the p.runLoop()
+# processLine():
+#  1st param:    pointer to the getline object
+#  2nd param:    line to be processed
+#  other params: passed from p.runLoop()
+#
+#  Return value:
+#    True:  p.runLoop() to continue to read lines
+#    False: p.runLoop() to stop reading lines and return False
 #
 def processLine(p, line, *argv):
-    r = re.compile(r'[0-9]+')
+    r = re.compile(r'^[0-9]*$')
     line = p.chop(line)
     m = r.search(line)
     if m != None:
         print line
 
+    return True
 
 if __name__ == '__main__':
+    main()
 ```
 
-Example:
-```
-% cat prLine.py | ./prLine.py
-    if len(sys.argv) > 1:
-        file = sys.argv[1]
-    # 1. Instantiate 'getline' with input file 'file'
-    # 2. Call the main loop runLoop()
-    # 2.1. runLoop() reads a line from 'file', then passes it to the first
-    # 2.1. runLoop() strips white spaces if the second parameter is 'True'
-    # 2.2. runLoop() does not strip white spaces if the  second parameter is 'False'
-    # 2.3. processLine() receives all parameters from the 3rd
-    ins.runLoop(processLine, False, 0)
-    r = re.compile(r'[0-9]+')
-%
-% ./prLine.py prLine.py
-    if len(sys.argv) > 1:
-        file = sys.argv[1]
-    # 1. Instantiate 'getline' with input file 'file'
-    # 2. Call the main loop runLoop()
-    # 2.1. runLoop() reads a line from 'file', then passes it to the first
-    # 2.1. runLoop() strips white spaces if the second parameter is 'True'
-    # 2.2. runLoop() does not strip white spaces if the  second parameter is 'False'
-    # 2.3. processLine() receives all parameters from the 3rd
-    ins.runLoop(processLine, False, 0)
-    r = re.compile(r'[0-9]+')
+## How to test the module
+```shell
+  python -m unittest -v getline
 ```
