@@ -45,9 +45,9 @@ def main():
 
 #
 # processLine():
-#  1st param:    pointer to the getline object
-#  2nd param:    line to be processed
-#  other params: passed from p.runLoop()
+#  param 1:  pointer to the getline object
+#  param 2:  line to be processed
+#  param 3-: passed from p.runLoop()
 #
 #  Return value:
 #    True:  p.runLoop() to continue to read lines
