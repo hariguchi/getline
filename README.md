@@ -1,7 +1,7 @@
 # getline
-The getline module provides a simple interface to read a line from an input
-stream and pass it to the specified function. An input stream can be either
-a regular file, stdin, or pipe.
+The getline module provides a simple interface to read a line
+from an input stream and pass it to the specified function. An
+input stream can be a regular file, stdin, or pipe. 
 
 ## Usage
 ```python
@@ -10,22 +10,23 @@ import re
 
 def main():
     #
-    # 1. Instantiate getline object
+    # 1. Instantiate getline object.
+    #    The parameter specifies an input stream
     #
     f = getline.getline('/etc/passwd') # regular file
     s = getline.getline('-')           # stdin
     p = getline.getline('ls /etc |')   # pipe
 
     #
-    # 2. Call the loop reading input stream
-    #    1st param: function to be called each time a new line is read
-    #               (let us call it processLine())
-    #    2nd param: line is stripped if it is True
-    #               line is *NOT* stripped if is False
-    #    3rd param: all parameters from the 3rd are passed to processLine()
+    # 2. Call getline.runLoop() that reads input stream
+    #    param 1:  function to be called each time a new line is read
+    #              (let us call it processLine())
+    #    param 2:  line is stripped if it is True
+    #              line is *NOT* stripped if is False
+    #    param 3-: all parameters from the 3rd are passed to processLine()
     #
     #    Return value:
-    #     True: input stream reached EOF (end of file)
+    #     True:  input stream reached EOF (end of file)
     #     False: processLine() exited before the input stream reached EOF
     #
     rc = p.runLoop(processLine, False, 0)
