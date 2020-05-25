@@ -18,16 +18,21 @@ def main():
     p = getline.getline('ls /etc |')   # pipe
 
     #
-    # 2. Call getline.runLoop() that reads input stream
-    #    param 1:  function to be called each time a new line is read
-    #              (let us call it processLine())
-    #    param 2:  line is stripped if it is True
-    #              line is *NOT* stripped if is False
-    #    param 3-: all parameters from the 3rd are passed to processLine()
+    # 2.1. Get the file descriptor associated with the input stream 
     #
-    #    Return value:
-    #     True:  input stream reached EOF (end of file)
-    #     False: processLine() exited before the input stream reached EOF
+    fd = p.fd()
+
+    #
+    # 2.2. runLoop() reads input stream line by line:
+    #      param 1:  function to be called each time a new line is read
+    #                (processLine() in this example)
+    #      param 2:  True:  line is stripped
+    #                False: line is *NOT* stripped
+    #      param 3-: all parameters from the 3rd are passed to processLine()
+    #
+    #      Return value:
+    #       True:  input stream reached EOF (end of file)
+    #       False: runLoop() exited before the input stream reached EOF
     #
     rc = p.runLoop(processLine, False, 0)
     if rc == True:

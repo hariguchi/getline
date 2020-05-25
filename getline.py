@@ -36,16 +36,21 @@ def main():
     p = getline.getline('ls /etc |')   # pipe
 
     #
-    # 2. Call getline.runLoop() that reads input stream
-    #    param 1:  function to be called each time a new line is read
-    #              (let us call it processLine())
-    #    param 2:  line is stripped if it is True
-    #              line is *NOT* stripped if is False
-    #    param 3-: all parameters from the 3rd are passed to processLine()
+    # 2.1. Get the file descriptor associated with the input stream 
     #
-    #    Return value:
-    #     True:  input stream reached EOF (end of file)
-    #     False: processLine() exited before the input stream reached EOF
+    fd = p.fd()
+
+    #
+    # 2.2. runLoop() reads input stream line by line:
+    #      param 1:  function to be called each time a new line is read
+    #                (processLine() in this example)
+    #      param 2:  True:  line is stripped
+    #                False: line is *NOT* stripped
+    #      param 3-: all parameters from the 3rd are passed to processLine()
+    #
+    #      Return value:
+    #       True:  input stream reached EOF (end of file)
+    #       False: runLoop() exited before the input stream reached EOF
     #
     rc = p.runLoop(processLine, False, 0)
     if rc == True:
@@ -97,27 +102,27 @@ import sys
 
 class getline:
     def __init__(self, file):
-        self.fd = None
+        self._fd = None
 
         file = file.strip()
         if file == '-':
-            self.fd = sys.stdin
+            self._fd = sys.stdin
         else:
             if file[len(file) - 1] == '|':
                 self._rd_open_pipe(self.chop(file))
             else:
                 try:
-                    self.fd = open(file, 'r')
+                    self._fd = open(file, 'r')
                 except IOError:
                     print >> sys.stderr, 'failed to open pipe to %s' % (file)
 
     def __del__(self):
-        if self.fd != None:
-            self.fd.close()
+        if self._fd != None:
+            self._fd.close()
 
     def __exit__(self, type, val, traceback):
-        if self.fd != None:
-            self.fd.close()
+        if self._fd != None:
+            self._fd.close()
 
     def _parse_command(self, cmd):
         m = re.search(r'(\||<|>|`|;)', cmd)
@@ -131,9 +136,15 @@ class getline:
             self._proc = subprocess.Popen(shlex.split(cmd),
                                           stdout=subprocess.PIPE,
                                           stderr=subprocess.PIPE)
-            self.fd = self._proc.stdout
+            self._fd = self._proc.stdout
         except IOError:
             print >> sys.stderr, 'failed to open pipe from %s' % (cmd)
+
+    #
+    # returns file descriptor
+    #
+    def fd(self):
+        return self._fd
 
     #
     # main loop
@@ -143,7 +154,7 @@ class getline:
         # Use readlines() for a small file since it reads entire file at once.
         # xreadlines() read one line at a time.
         #
-        for line in self.fd.xreadlines():
+        for line in self._fd.xreadlines():
             if doStrip is True:
                 line = line.strip()
 
