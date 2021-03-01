@@ -59,11 +59,11 @@ def main():
 #    False: p.runLoop() to stop reading lines and return False
 #
 def processLine(p, line, *argv):
-    r = re.compile(r'[0-9]+')
+    r = re.compile(r' ([0-9]+) ')
     line = p.chop(line)
     m = r.search(line)
     if m != None:
-        print line
+        print m.group(1)
 
     return True
 
