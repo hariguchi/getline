@@ -28,6 +28,7 @@ Bonus: This module has the functions that print out a string to stderr.
 You can use them like as follows:
 
   import getline3
+  getline = getline3.getline
   eprint = getline3.eprint
   ewrite = getline3.ewrite
 
@@ -41,14 +42,18 @@ Example:
 import getline3
 import re
 
+getline = getline3.getline
+eprint = getline3.eprint
+ewrite = getline3.ewrite
+
 def main():
     #
     # 1. Instantiate getline object
     #    The parameter specifies an input stream
     #
-    f = getline3.getline('/etc/passwd') # regular file
-    s = getline3.getline('-')           # stdin
-    p = getline3.getline('ls /etc |')   # pipe
+    f = getline('/etc/passwd') # regular file
+    s = getline('-')           # stdin
+    p = getline('ls /etc |')   # pipe
 
     #
     # 2.1. Get the file descriptor associated with the input stream 
@@ -69,9 +74,9 @@ def main():
     #
     rc = p.runLoop(processLine, False, 0)
     if rc == True:
-        print '*** Reached the end of file ***'
+        print('*** Reached the end of file ***')
     else:
-        print '*** Quit before reaching the end of file ***'
+        print('*** Quit before reaching the end of file ***')
 
     #
     # 3. destruct the getline object
@@ -96,7 +101,7 @@ def processLine(p, line, *argv):
     line = p.chop(line)
     m = r.search(line)
     if m != None:
-        print m.group(1)
+        print(m.group(1))
 
     return True
 
@@ -306,6 +311,7 @@ import getline3
 import sys
 import tempfile
 
+getline = getline3.getline
 
 def processLine(p, line, *argv):
     sys.stdout.write(line)
@@ -313,7 +319,7 @@ def processLine(p, line, *argv):
 
 def main():
     tmp = tempfile.NamedTemporaryFile(delete=False)
-    obj = getline3.getline('-') # read from stdin
+    obj = getline('-') # read from stdin
     obj.runLoop(processLine, False, 0)
 
 if __name__ == '__main__':
