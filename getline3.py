@@ -1,4 +1,4 @@
-r''' getline3 - Get each line from a stream 
+r'''getline3 - Get each line from a stream 
 
    Copyright (c) 2021 Yoichi Hariguchi
    All rights reserved.
@@ -16,14 +16,14 @@ r''' getline3 - Get each line from a stream
    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
-The getline module provides a simple interface to read a line from an input
-stream and pass it to the specified function. An input stream can be a
-regular file, stdin, or pipe.
+The getline module for Python3 provides a simple interface to read a
+line from an input stream and pass it to the specified function. An
+input stream can be a regular file, stdin, or pipe.
 
 Bonus: This module has the functions that print out a string to stderr.
 
-  - eprint(*args, **kwargs)
-  - ewrite(string)
+  - getline3.eprint(*args, **kwargs)
+  - fetline3.ewrite(string)
 
 You can use them like as follows:
 
@@ -34,21 +34,27 @@ You can use them like as follows:
 
   eprint('ERROR:')
 
-eprint() adds a newline at the end while ewrite() does not.
+eprint() adds a newline to the end string while ewrite() does not.
 
 
 Example:
 
+-----------------------------------------------------------------
+#!/usr/bin/env python3
+
 import getline3
 import re
 
+#
+# for convenience
+#
 getline = getline3.getline
 eprint = getline3.eprint
 ewrite = getline3.ewrite
 
 def main():
     #
-    # 1. Instantiate getline object
+    # 1. Instantiate getline object.
     #    The parameter specifies an input stream
     #
     f = getline('/etc/passwd') # regular file
@@ -97,7 +103,7 @@ def main():
 #    False: p.runLoop() to stop reading lines and return False
 #
 def processLine(p, line, *argv):
-    r = re.compile(r' ([0-9]+) ')
+    r = re.compile(r'^(.*).conf$')
     line = p.chop(line)
     m = r.search(line)
     if m != None:
@@ -107,10 +113,11 @@ def processLine(p, line, *argv):
 
 if __name__ == '__main__':
     main()
-
+-----------------------------------------------------------------
 
 How to test the module:
   python3 -m unittest -v getline3
+
 '''
 
 import os
